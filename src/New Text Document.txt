@@ -1,0 +1,30 @@
+- Gig:
+    name: EP Launch!
+    venue: Bar Open
+    date: 23/05/26
+    link: https://baropen.oztix.com.au/outlet/event/2cee0d77-6faf-4f28-9ba7-717e65345a6f
+    
+- Gig:
+    name: 
+    venue: Wah Wah Records
+    date: 18/04/26
+    link: 
+
+
+- Release:
+    title: Soul Digger
+    description: soul digger by me
+    cover_url:
+    audio_url:
+    links: 
+    file:
+    
+- Release:
+    title: TV
+    description: my first ever single 'TV' is out now on all streaming platforms!! this song captures a very specific phase of my life. i hope it's as cathartic to listen to as it was to writesoul digger by me
+    cover_url:
+    audio_url:
+    links: 
+    file:
+    
+

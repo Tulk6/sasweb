@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+
+<html>
+
+    <head>
+        <title>Saskia Robin</title>
+
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="live.css">
+
+        <script src="script.js"></script>
+    </head>
+
+
+    <body>
+        <div id="mainsection">
+
+            <nav id="navbar">
+                <a href="index.html">Home</a> |
+                <a id="currentpagenav" href="live.html">Live</a> |
+                <a href="music.html">Music</a> |
+                <a href="about.html">About</a>
+            </nav>
+            
+            <!--<marquee width="100%">Soul Digger out now!</marquee>-->
+        
+            <h3>&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;<br>&#61332; Upcoming shows &#61333;</h1>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Event</th>
+                        <th>Venue</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+
+                {{#Upcoming Gig}}
+                    <tr>
+                        <td>{{date}}</td>
+                        <td>{{event}}</td>
+                        <td>{{venue}}</td>
+                        <td><a target="blank" href="{{link}}">here!</a></td>
+                    </tr>
+
+                {{/Upcoming Gig}}
+
+            </table>
+
+            <br>
+
+            <h3>&#61332; Past shows &#61333;</h1>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Venue</th>
+                    </tr>
+                </thead>
+
+                {{#Past Gig}}
+                    <tr>
+                        <td>{{date}}</td>
+                        <td>{{venue}}</td>
+                    </tr>
+                {{/Past Gig}}
+                
+            </table>
+
+            <br>
+            <img src="images/green-dithered.png" width=80%>
+            
+            <div id="imgbanner">
+                <img src="images/fish.gif">
+                <img src="images/cat.gif">
+                <!--<img src="images/cockroach.gif">
+                <img src="images/boombox.gif">-->
+            </div>
+
+            <h3>&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;&#61336;</h3>
+            
+        </div>
+
+    </body>
+
+</html>
