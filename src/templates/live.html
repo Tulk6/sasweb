@@ -36,6 +36,15 @@
                     </tr>
                 </thead>
 
+                {{#upcoming gigs}}
+                    <tr>
+                        <td>{{date}}</td>
+                        <td>{{event}}</td>
+                        <td>{{venue}}</td>
+                        <td><a target="blank" href="{{link}}">here!</a></td>
+                    </tr>
+
+                {{/upcoming gigs}}
 
             </table>
 
@@ -51,6 +60,12 @@
                     </tr>
                 </thead>
 
+                {{#past gigs}}
+                    <tr>
+                        <td>{{date}}</td>
+                        <td>{{venue}}</td>
+                    </tr>
+                {{/past gigs}}
                 
             </table>
 
