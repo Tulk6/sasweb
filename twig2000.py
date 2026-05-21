@@ -72,6 +72,13 @@ class Twig(tk.Tk):
     def on_tab_change(self, event):
         self.update_gig_list()
         self.update_release_list()
+        self.create_gig_popup()
+
+    def create_gig_popup(self):
+        self.gig_popup = tk.Toplevel(self)
+        gig_entry = tk.Entry(self.gig_popup)
+        gig_entry.pack()
+        self.gig_popup.wait_window()
         
 
 twig = Twig()
