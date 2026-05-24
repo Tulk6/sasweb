@@ -120,6 +120,13 @@ class ReleasePopup(tk.Toplevel):
         self.slug = slug
         self.dir = f'src/releases/{self.slug}/'
         self.cover_path = None
+        self.create_gig_popup()
+
+    def create_gig_popup(self):
+        self.gig_popup = tk.Toplevel(self)
+        gig_entry = tk.Entry(self.gig_popup)
+        gig_entry.pack()
+        self.gig_popup.wait_window()
         
         self.load_gui()
         self.load_dir()
