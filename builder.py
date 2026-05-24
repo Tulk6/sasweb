@@ -6,11 +6,11 @@ from PIL import Image
 #   read site.yaml, read releases, read gigs
 #   archive
 #   move photos and files, build pages
+#
 
 
 # rn doesnt move/downscale photos
 # if added should probs be made selective ???
-
 
 class Builder:
     def __init__(self):
@@ -56,7 +56,7 @@ class Builder:
             with open(f'src/gigs/{directory}/info.yaml') as f:
                 release_details = yaml.safe_load(f)
             self.db['gigs'].append(release_details)
-        
+
     def load_releases(self):
         self.db['releases'] = []
         for directory in os.listdir('src/releases'):
@@ -67,7 +67,7 @@ class Builder:
             link_list = []
             for name, link in release_details['links'].items():
                 link_list.append({'name': name, 'url': link})
-            release_details['links'] = link_list 
+            release_details['links'] = link_list
 
             self.db['releases'].append(release_details)
 
@@ -152,9 +152,7 @@ class Builder:
 ##            img = Image.open(f'src/images/{file}')
 ##            #img.thumbnail((512, 512))
 ##            file_name = file.split('.')[0]
-##            img.save(f'site/images/{file_name}.png')    
+##            img.save(f'site/images/{file_name}.png')
 
 #builder = Builder()
 #builder.rebuild_site()
-    
-    
