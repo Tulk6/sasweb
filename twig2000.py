@@ -8,6 +8,9 @@ from tkinter import ttk
 import tkcalendar
 from tkinterdnd2 import TkinterDnD as tkdnd, DND_FILES
 import tkinter.filedialog as tkfd
+import tkinter.messagebox as tkmb
+import tkinter.simpledialog as tksd
+import datetime
 
 class Twig(tkdnd.Tk):
     supported_img_files = ('.png', '.jpg', '.jpeg', '.avif', '.webp', '.heic')
@@ -18,6 +21,7 @@ class Twig(tkdnd.Tk):
         self.uploader = uploader.Uploader('awd')
 
         self.load_gui()
+        self.mainloop()
 
     def load_gui(self):
         self.notebook = ttk.Notebook(self)
@@ -37,7 +41,7 @@ class Twig(tkdnd.Tk):
         self.release_edit = ttk.Button(self.release_frame, text='Edit', command=self.edit_release)
         self.release_edit.grid(column=0, row=1, sticky='nesw')
 
-        self.release_new = ttk.Button(self.release_frame, text='New', command=self.edit_release)
+        self.release_new = ttk.Button(self.release_frame, text='New', command=self.ask_new_release)
         self.release_new.grid(column=1, row=1, sticky='nesw')
         
         self.update_release_list()
@@ -106,6 +110,35 @@ class Twig(tkdnd.Tk):
         current_release = self.release_list.get(self.release_list.curselection())
         self.create_release_popup(current_release)
 
+    def ask_new_release(self):
+        while True:
+            release_name = tksd.askstring('Enter ID', prompt='Please enter an ID (this will not be visible to others so you can choose whatever)')
+            if not release_name:
+                return
+            if not release_name.replace(' ', '').replace('_', '').isalnum():
+                tkmb.showerror('Invalid ID', message='ID must contain only letters, numbers, _, and spaces')
+            else:
+                break
+
+        self.new_release(release_name)
+        self.update_release_list()
+
+    def new_release(self, name):
+        today = datetime.date.today()
+        dr = f'src/releases/{name}/'
+        os.mkdir(dr)
+        with open(dr+'info.yaml', 'w') as f:
+            f.write((f'date: {today}\n'
+                    'description: New Release\n'
+                    'links:\n'
+                    '   Bandcamp: \n' 
+                    '   Soundcloud: \n'
+                    '   Spotify: \n'
+                    '   YouTube: \n'
+                    'title: New Release'))
+        
+            
+
 class GigPopup(tk.Toplevel):
     def __init__(self, root):
         super().__init__()
@@ -120,18 +153,13 @@ class ReleasePopup(tk.Toplevel):
         self.slug = slug
         self.dir = f'src/releases/{self.slug}/'
         self.cover_path = None
-        self.create_gig_popup()
-
-    def create_gig_popup(self):
-        self.gig_popup = tk.Toplevel(self)
-        gig_entry = tk.Entry(self.gig_popup)
-        gig_entry.pack()
-        self.gig_popup.wait_window()
         
         self.load_gui()
         self.load_dir()
 
     def load_gui(self):
+        self.protocol('WM_DELETE_WINDOW', self.ask_close)
+        
         self.columnconfigure(1, weight=1)
         self.rowconfigure(3, weight=1)
         self.rowconfigure(5, weight=1)
@@ -165,11 +193,11 @@ class ReleasePopup(tk.Toplevel):
         self.photo_drop.dnd_bind('<<Drop>>', lambda e: self.cover_chosen(e.data))
         self.photo_drop.grid(row=6, column=1, columnspan=1, sticky='nesw', ipady=10)
 
-        self.save_button = ttk.Button(self, text='Save and Close', command=self.save_dir)
+        self.save_button = ttk.Button(self, text='Save and Close', command=self.save_and_close)
         self.save_button.grid(row=7, column=0)
 
         self.cancel_button = ttk.Button(self, text='Cancel', command=self.force_close)
-        self.cancel_button.grid(row=7, column=0)
+        self.cancel_button.grid(row=7, column=1)
 
     def load_dir(self):
         with open(self.dir+'info.yaml') as f:
@@ -210,6 +238,11 @@ class ReleasePopup(tk.Toplevel):
         with open(self.dir+'info.yaml', 'w') as f:
             yaml.safe_dump(release_details, f, default_flow_style=False)
 
+
+    def save_and_close(self):
+        self.save_dir()
+        self.force_close()
+
     def choose_photo(self):
         if path := tkfd.askopenfilename():
             self.cover_chosen(path)
@@ -228,5 +261,12 @@ class ReleasePopup(tk.Toplevel):
         img = Image.open(self.cover_path)
         img.save(self.dir+f'cover.png')
 
+    def force_close(self):
+        self.destroy()
+
+    def ask_close(self):
+        sure_close = tkmb.askokcancel(title='Close without saving', message='Your changes are not saved. Would you like to close without saving?')
+        if sure_close:
+            self.force_close()
 
 twig = Twig()
