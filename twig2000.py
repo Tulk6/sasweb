@@ -33,16 +33,20 @@ class Twig(tkdnd.Tk):
         self.release_frame = ttk.Frame(self.notebook)
         self.release_frame.columnconfigure(0, weight=1)
         self.release_frame.columnconfigure(1, weight=1)
+        self.release_frame.columnconfigure(2, weight=1)
         self.release_frame.rowconfigure(0, weight=1)
 
         self.release_list = tk.Listbox(self.release_frame, selectmode=tk.SINGLE)
-        self.release_list.grid(column=0, columnspan=2, row=0, sticky='nesw')
+        self.release_list.grid(column=0, columnspan=3, row=0, sticky='nesw')
 
         self.release_edit = ttk.Button(self.release_frame, text='Edit', command=self.edit_release)
         self.release_edit.grid(column=0, row=1, sticky='nesw')
 
         self.release_new = ttk.Button(self.release_frame, text='New', command=self.ask_new_release)
         self.release_new.grid(column=1, row=1, sticky='nesw')
+
+        self.release_new = ttk.Button(self.release_frame, text='Delete', command=self.delete_release)
+        self.release_new.grid(column=2, row=1, sticky='nesw')
         
         self.update_release_list()
 
@@ -136,7 +140,15 @@ class Twig(tkdnd.Tk):
                     '   Spotify: \n'
                     '   YouTube: \n'
                     'title: New Release'))
-        
+
+    def ask_delete_release(self):
+        release_name = self.release_list.get(self.release_list.curselection())
+        sure_delete = tkmb.askyesno(title='Delete Release?', message=f'Would you like to delete {release_name}?')
+        if sure_delete:
+            self.delete_release(release_name)
+
+    def delete_release(self, name):
+        shutil.rmtree(f'src/releases/{name}')
             
 
 class GigPopup(tk.Toplevel):
