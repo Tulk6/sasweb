@@ -6,12 +6,12 @@ from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import ttk
 import tkcalendar
-#from tkinterdnd2 import TkinterDnD as tkdnd, DND_FILES
+from tkinterdnd2 import TkinterDnD as tkdnd, DND_FILES
 import tkinter.filedialog as tkfd
 import tkinter.messagebox as tkmb
 import tkinter.simpledialog as tksd
 
-class Twig(tk.Tk):
+class Twig(tkdnd.Tk):
     supported_img_files = ('.png', '.jpg', '.jpeg', '.avif', '.webp', '.heic')
     def __init__(self):
         super().__init__()
@@ -43,6 +43,11 @@ class Twig(tk.Tk):
 
         self.upload_button = ttk.Button(self.site_frame, text='Upload local site', command=self.upload)
         self.upload_button.pack()
+
+        self.archive_var = tk.BooleanVar()
+        self.archive_var.set(True)
+        self.archive_checkbox = ttk.Checkbutton(self.site_frame, text='Create site archive', variable=self.archive_var)
+        self.archive_checkbox.pack()
 
 
         self.release_frame = ttk.Frame(self.notebook)
@@ -222,7 +227,7 @@ class Twig(tk.Tk):
     def build(self):
         sure_build = tkmb.askokcancel('Continue building', message='This will remove all unsaved changes. Proceed?')
         if sure_build:
-            self.builder.rebuild_site()
+            self.builder.rebuild_site(make_archive=self.archive_var.get())
             return True
         else: return False
 
@@ -356,8 +361,8 @@ class ReleasePopup(tk.Toplevel):
 
         self.photo_drop = ttk.Button(self, text='Click to select cover',
                                       command=self.choose_photo)
-        #self.photo_drop.drop_target_register(DND_FILES)
-        #self.photo_drop.dnd_bind('<<Drop>>', lambda e: self.cover_chosen(e.data))
+        self.photo_drop.drop_target_register(DND_FILES)
+        self.photo_drop.dnd_bind('<<Drop>>', lambda e: self.cover_chosen(e.data))
         self.photo_drop.grid(row=6, column=1, columnspan=1, sticky='nesw', ipady=10)
 
         self.button_frame = tk.Frame(self)

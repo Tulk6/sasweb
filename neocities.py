@@ -23,7 +23,7 @@ class Neocities:
 
     ###<------BASE NEOCITIES API FUNCTIONS------>
 
-    def upload(self, *files):
+    def upload_file(self, *files):
         payload = {}
         for (local_path, path_on_server) in files:
             payload[path_on_server] = open(local_path, 'rb')
@@ -31,6 +31,8 @@ class Neocities:
         print(payload)
         
         r = self._post('upload', files=payload)
+
+        print(r)
 
         return self._handle_response(r)
 
@@ -69,11 +71,17 @@ class Neocities:
         file_paths = []
         for path, subdirs, files in os.walk(local_source_path):
             for file in files:
+                file_type = file.split('.')[1].lower()
+                if not file_type in 'apng asc atom avif bin cjs css csv dae eot epub geojson gif glb glsl gltf gpg htm html ico jpeg jpg js json jxl key kml knowl less manifest map markdown md mf mid midi mjs mtl obj opml osdx otf pdf pgp pls png py rdf resolveHandle rss sass scss sf2 svg text toml ts tsv ttf txt webapp webmanifest webp woff woff2 xcf xml yaml yml':
+                    print(f'COULD NOT UPLOAD {file} - DISALLOWED FILE TYPE')
+                    continue
                 local_path = (path+'\\'+file).replace('\\', '/') #neocities wants posix format paths
                 server_path = local_path[len(local_source_path):]
                 file_paths.append((local_path, server_path)) #assumes that path on server same as local
 
-        self.upload(*file_paths)
+        self.upload_file(*file_paths)
+
+        print('FINISHED UPLOADING')
 
     def sync_server(self, local_source_path):
         pass

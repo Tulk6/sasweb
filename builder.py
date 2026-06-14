@@ -71,6 +71,8 @@ class Builder:
 
             self.db['releases'].append(release_details)
 
+        self.db['releases'].sort(key=lambda x: x['date'], reverse=True)
+
     def load_gigs(self):
         self.db['gigs'] = []
         self.db['upcoming gigs'] = []
@@ -108,7 +110,7 @@ class Builder:
         while os.path.isfile(f'archive/{archive_name}.zip'): # really ugly way of making sure we dont override an archive,
             #but that we also always successfully archive
             archive_name += 'n'
-        shutil.make_archive(f'archive/{archive_name}.zip', 'zip', 'site/')
+        shutil.make_archive(f'archive/{archive_name}.zip', 'zip', 'src/')
         print('Site archived')
 
     def build_folders(self):
