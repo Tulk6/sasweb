@@ -1,7 +1,7 @@
 #NEW TEST FOR UPDATYER
 
 import builder, uploader, keys, updater
-import os, yaml, datetime, shutil
+import os, yaml, datetime, shutil, sys
 
 from PIL import Image, ImageTk
 
@@ -51,7 +51,7 @@ class Twig(tkdnd.Tk):
         self.archive_checkbox = ttk.Checkbutton(self.site_frame, text='Create site archive', variable=self.archive_var)
         self.archive_checkbox.pack()
 
-        self.update_button = ttk.Button(self.site_frame, text='Update', command=updater.update)
+        self.update_button = ttk.Button(self.site_frame, text='Update', command=self.ask_update)
         self.update_button.pack()
 
 
@@ -95,6 +95,12 @@ class Twig(tkdnd.Tk):
         self.notebook.add(self.release_frame, text='Releases')
         self.notebook.add(self.gig_frame, text='Gigs')
         self.notebook.pack(expand=True, fill='both')
+
+    def ask_update(self):
+        sure_update = tkmb.askokcancel(title='Update?', message='Would you like to update? This will close the window')
+        if sure_update:
+            updater.update()
+            self.destroy()
 
     def update_gig_list(self):
         self.gig_list.delete(0, tk.END)
