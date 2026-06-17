@@ -14,7 +14,27 @@ from PIL import Image
 
 class Builder:
     def __init__(self):
-        pass
+        self.ensure_dir()
+
+    def ensure_file(self, path):
+        if not os.path.exists(path):
+            open(path, mode='x').close()
+
+    def ensure_folder(self, path):
+        if not os.path.exists(path):
+            os.mkdir(path)
+
+    def ensure_dir(self):
+        self.ensure_folder('src')
+        self.ensure_folder('src/gigs')
+        self.ensure_folder('src/releases')
+        self.ensure_folder('src/static')
+        self.ensure_folder('src/templates')
+
+        self.ensure_folder('archive')
+        
+        self.ensure_file('src/manifest.yaml')
+        
 
     def rebuild_site(self, make_archive=False, clean_build=True):
         if make_archive: self.archive_site()
