@@ -1,4 +1,4 @@
-#test comment for updater
+#NEW TEST FOR UPDATYER
 
 import builder, uploader, keys, updater
 import os, yaml, datetime, shutil
