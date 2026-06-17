@@ -123,9 +123,12 @@ class Builder:
 
     def load_release_cover(self, directory):
         cover = 'src/releases/'+directory+'/cover.png'
-        img = Image.open(cover)
-        img.thumbnail((256, 256))
-        img.save(f'site/covers/{directory}.png')
+        if os.path.exists(cover):
+            img = Image.open(cover)
+            img.thumbnail((256, 256))
+            img.save(f'site/covers/{directory}.png')
+        else:
+            pass
 
     def archive_site(self):
         today = datetime.datetime.today()
