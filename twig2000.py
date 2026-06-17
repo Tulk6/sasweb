@@ -1,3 +1,5 @@
+#test comment for updater
+
 import builder, uploader, keys, updater
 import os, yaml, datetime, shutil
 
