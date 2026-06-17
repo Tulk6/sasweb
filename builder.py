@@ -72,7 +72,7 @@ class Builder:
         self.db = {}
         with open('src/manifest.yaml') as f:
             site = yaml.safe_load(f)
-            self.db = site
+            if site is not None: self.db = site
 
     def load_gigs(self):
         self.db['gigs'] = []
