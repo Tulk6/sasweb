@@ -1,4 +1,4 @@
-import builder, uploader, keys
+import builder, uploader, keys, updater
 import os, yaml, datetime, shutil
 
 from PIL import Image, ImageTk
@@ -48,6 +48,9 @@ class Twig(tkdnd.Tk):
         self.archive_var.set(True)
         self.archive_checkbox = ttk.Checkbutton(self.site_frame, text='Create site archive', variable=self.archive_var)
         self.archive_checkbox.pack()
+
+        self.update_button = ttk.Button(self.site_frame, text='Update', command=updater.update)
+        self.update_button.pack()
 
 
         self.release_frame = ttk.Frame(self.notebook)
