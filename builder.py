@@ -16,9 +16,11 @@ class Builder:
     def __init__(self):
         self.ensure_dir()
 
-    def ensure_file(self, path):
+    def ensure_file(self, path, contents=None):
         if not os.path.exists(path):
-            open(path, mode='x').close()
+            f = open(path, mode='x')
+            if contents is not None: f.write(contents)
+            f.close()
 
     def ensure_folder(self, path):
         if not os.path.exists(path):
