@@ -34,6 +34,8 @@ class Builder:
         self.ensure_folder('src/templates')
 
         self.ensure_folder('archive')
+
+        self.ensure_folder('site')
         
         self.ensure_file('src/manifest.yaml')
         
@@ -45,7 +47,7 @@ class Builder:
 
     def clear_site(self):
         print('Clearing site...')
-        shutil.rmtree('site')
+        if os.path.exists('site'): shutil.rmtree('site')
         os.mkdir('site')
         print('Site cleared')
 
