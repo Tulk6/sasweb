@@ -171,7 +171,7 @@ class Builder:
         for root, dirs, files in os.walk('src/static'):
             #print(root)
             for dr in dirs:
-                if dir[0] == '.': continue
+                if dr[0] == '.': continue
                 #print(f'Making dir {dr}')
                 os.mkdir(f'site/{dr}')
             for file in files:
