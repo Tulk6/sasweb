@@ -5,4 +5,4 @@ class Uploader(neocities.Neocities):
         super().__init__(api_key)
 
     def upload(self):
-        self.upload_folder('site')
+        response = self.upload_folder('site')

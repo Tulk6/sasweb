@@ -17,6 +17,7 @@ class Neocities:
 
     def _handle_response(self, response):
         if response.status_code == 200:
+            print('###Success!###')
             return True
         else:
             raise(NeocitiesAPIError(response))
@@ -28,11 +29,10 @@ class Neocities:
         for (local_path, path_on_server) in files:
             payload[path_on_server] = open(local_path, 'rb')
 
-        print(payload)
+        print('Uploading these files: ')
+        print('\t'+'\n\t'.join(payload.keys()))
         
         r = self._post('upload', files=payload)
-
-        print(r)
 
         return self._handle_response(r)
 

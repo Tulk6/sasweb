@@ -44,19 +44,20 @@ class Builder:
         if make_archive: self.archive_site()
         if clean_build: self.clear_site()
         self.build_site()
+        print('###Success!###')
 
     def clear_site(self):
         print('Clearing site...')
         if os.path.exists('site'): shutil.rmtree('site')
         os.mkdir('site')
-        print('Site cleared')
+        print('>>Site cleared')
 
     def load_site(self):
         print('Loading site...')
         self.load_manifest()
         self.load_gigs()
         self.load_releases()
-        print('Site loaded')
+        print('>>Site loaded')
 
     def build_site(self):
         self.load_site()
@@ -66,7 +67,7 @@ class Builder:
         self.build_pages()
         self.build_covers()
         #self.build_images()
-        print('Site built')
+        print('>>Site built')
 
     def load_manifest(self):
         self.db = {}
@@ -119,7 +120,7 @@ class Builder:
         print('Converting covers...')
         for release in self.db['releases']:
             self.load_release_cover(release['slug'])
-        print('Covers converted')
+        print('>>Covers converted')
 
     def load_release_cover(self, directory):
         cover = 'src/releases/'+directory+'/cover.png'
@@ -138,7 +139,7 @@ class Builder:
             #but that we also always successfully archive
             archive_name += 'n'
         shutil.make_archive(f'archive/{archive_name}.zip', 'zip', 'src/')
-        print('Site archived')
+        print('>>Site archived')
 
     def build_folders(self):
         #os.mkdir('site/audio')
@@ -159,7 +160,7 @@ class Builder:
             with open(f'site/{page_title}.html', 'w') as f:
                 f.write(rendered_page)
 
-        print('Pages rendered')
+        print('>>Pages rendered')
 
     def build_static(self):
         print('Moving static files...')
@@ -173,7 +174,7 @@ class Builder:
                 rel_path = path.relative_to('src/static')
                 #print(rel_path)
                 shutil.copyfile(path, f'site/{rel_path}')
-        print('Static files moved')
+        print('>>Static files moved')
 
     def build_images(self):
         pass
