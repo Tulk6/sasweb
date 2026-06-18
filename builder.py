@@ -75,16 +75,18 @@ class Builder:
             site = yaml.safe_load(f)
             if site is not None: self.db = site
 
-    def load_gigs(self):
-        self.db['gigs'] = []
-        for directory in os.listdir('src/gigs'):
-            with open(f'src/gigs/{directory}/info.yaml') as f:
-                release_details = yaml.safe_load(f)
-            self.db['gigs'].append(release_details)
+##    def load_gigs(self):
+##        self.db['gigs'] = []
+##        for directory in os.listdir('src/gigs'):
+##            if gig_file[0] == '.': continue
+##            with open(f'src/gigs/{directory}/info.yaml') as f:
+##                release_details = yaml.safe_load(f)
+##            self.db['gigs'].append(release_details)
 
     def load_releases(self):
         self.db['releases'] = []
         for directory in os.listdir('src/releases'):
+            if directory[0] == '.': continue
             with open(f'src/releases/{directory}/info.yaml') as f:
                 release_details = yaml.safe_load(f)
             release_details['slug'] = directory
@@ -103,6 +105,7 @@ class Builder:
         self.db['upcoming gigs'] = []
         self.db['past gigs'] = []
         for gig in os.listdir('src/gigs'):
+            if gig[0] == '.': continue
             with open(f'src/gigs/{gig}') as f:
                 gig_details = yaml.safe_load(f)
             gig_details['slug'] = gig
@@ -151,6 +154,7 @@ class Builder:
     def build_pages(self):
         print('Rendering page templates...')
         for page in os.listdir('src/templates'):
+            if page[0] == '.': continue
             page_title = page.split('.')[0]
             with open(f'src/templates/{page}') as f:
                 template = f.read()
@@ -167,9 +171,11 @@ class Builder:
         for root, dirs, files in os.walk('src/static'):
             #print(root)
             for dr in dirs:
+                if dir[0] == '.': continue
                 #print(f'Making dir {dr}')
                 os.mkdir(f'site/{dr}')
             for file in files:
+                if file[0] == '.': continue
                 path = pathlib.Path(f'{root}/{file}')
                 rel_path = path.relative_to('src/static')
                 #print(rel_path)

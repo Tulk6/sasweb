@@ -21,6 +21,9 @@ class Twig(tkdnd.Tk):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         os.chdir(dir_path)
 
+        self.title('Twig2000')
+        self.iconbitmap(default="twig_icon2.ico")
+
         self.builder = builder.Builder()
         self.uploader = uploader.Uploader(keys.NEOCITIES_API_KEY)
 
@@ -107,6 +110,7 @@ class Twig(tkdnd.Tk):
 
         gigs = []
         for gig_file in os.listdir('src/gigs'):
+            if gig_file[0] == '.': continue
             with open('src/gigs/'+gig_file) as f:
                 gig_details = yaml.safe_load(f)
             gig_details['slug'] = gig_file.split('.')[0]
@@ -122,6 +126,7 @@ class Twig(tkdnd.Tk):
 
         releases = []
         for release_dir in os.listdir('src/releases'):
+            if release_dir[0] == '.': continue #ds store etc
             with open('src/releases/'+release_dir+'/info.yaml') as f:
                 release_details = yaml.safe_load(f)
             releases.append((release_dir, release_details['date']))
@@ -263,6 +268,7 @@ class GigPopup(tk.Toplevel):
         self.load_src()
 
     def load_gui(self):
+        self.title(f'Editing {self.slug}')
         self.protocol('WM_DELETE_WINDOW', self.ask_close)
         self.resizable(True, False)
 
@@ -340,6 +346,7 @@ class ReleasePopup(tk.Toplevel):
         self.load_dir()
 
     def load_gui(self):
+        self.title(f'Editing {self.slug}')
         self.protocol('WM_DELETE_WINDOW', self.ask_close)
         
         self.columnconfigure(1, weight=1)
