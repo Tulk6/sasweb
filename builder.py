@@ -2,6 +2,11 @@ import yaml, os, shutil, chevron, zipfile, pathlib
 import datetime
 from PIL import Image
 
+
+### Fix date drop down
+#remove pop ups
+
+
 #builder steps:
 #   read site.yaml, read releases, read gigs
 #   archive

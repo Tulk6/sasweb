@@ -168,7 +168,8 @@ class Twig(tkdnd.Tk):
                 break
 
         self.new_gig(gig_name)
-        self.update_gig_list()
+        self.create_gig_popup(gig_name)
+        
 
     def new_gig(self, gig_name):
         today = datetime.date.today()
@@ -215,7 +216,7 @@ class Twig(tkdnd.Tk):
                 break
 
         self.new_release(release_name)
-        self.update_release_list()
+        self.create_release_popup(release_name)
 
     def new_release(self, name):
         today = datetime.date.today()
