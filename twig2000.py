@@ -22,7 +22,7 @@ class Twig(tkdnd.Tk):
         os.chdir(dir_path)
 
         self.title('Twig2000')
-        self.iconbitmap(default="twig_icon2.ico")
+        #self.iconbitmap(default="twig_icon2.ico")
 
         self.builder = builder.Builder()
         self.uploader = uploader.Uploader(keys.NEOCITIES_API_KEY)
