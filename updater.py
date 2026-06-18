@@ -5,3 +5,6 @@ def update():
 
     r = subprocess.Popen(["git", "pull", "origin", "main"])
     
+
+if __name__ == '__main__':
+    update()
