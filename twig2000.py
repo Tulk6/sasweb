@@ -1,4 +1,4 @@
-#NEW TEST FOR UPDATYER
+#!/usr/bin/python3
 
 import builder, uploader, keys, updater
 import os, yaml, datetime, shutil, sys
