@@ -3,10 +3,6 @@ import datetime
 from PIL import Image
 
 
-### Fix date drop down
-#remove pop ups
-
-
 #builder steps:
 #   read site.yaml, read releases, read gigs
 #   archive
@@ -113,9 +109,14 @@ class Builder:
             if gig[0] == '.': continue
             with open(f'src/gigs/{gig}') as f:
                 gig_details = yaml.safe_load(f)
+            gig_details = {'event': None, 'date': None, 'time': None, 'link': None, 'venue': None} | gig_details
             gig_details['slug'] = gig
             today = datetime.date.today()
-            if (today<=gig_details['date']): #check if gig is upcoming is past
+            gig_date = gig_details['date']
+            gig_time = ' @ '+gig_details['time'] if gig_details['time'] is not None else ''
+            gig_details['date'] = gig_date.strftime("%d/%m/%y")
+            if (today<=gig_date): #check if gig is upcoming is past
+                gig_details['date'] += gig_time
                 self.db['upcoming gigs'].append(gig_details)
             else:
                 self.db['past gigs'].append(gig_details)

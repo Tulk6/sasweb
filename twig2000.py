@@ -1,8 +1,16 @@
 #!/usr/bin/python3
 
 
-
-#hello!
+### TO DO
+# change dates in gigs
+# sort upcoming gigs soonest->latest
+# make gig link the whole thing
+# Fix date drop down
+# remove pop ups
+# scores page
+# store page
+# mailing list form
+# mailing list integration??
 
 import builder, uploader, keys, updater
 import os, yaml, datetime, shutil, sys
@@ -175,6 +183,7 @@ class Twig(tkdnd.Tk):
         today = datetime.date.today()
         with open(f'src/gigs/{gig_name}.yaml', 'w') as f:
             f.write(f'date: {today}\n'
+                    'time: \n'
                     'event: \n'
                     'link: \n'
                     'venue: ')
@@ -289,18 +298,23 @@ class GigPopup(tk.Toplevel):
         self.date_entry = tkcalendar.DateEntry(self, locale='en_AU')
         self.date_entry.grid(row=1, column=1, sticky='nesw')
 
+        self.time_desc = ttk.Label(self, text='Time: ')
+        self.time_desc.grid(row=2, column=0, sticky='nsw')
+        self.time_entry = ttk.Entry(self)
+        self.time_entry.grid(row=2, column=1, sticky='nesw')
+
         self.link_desc = ttk.Label(self, text='Link: ')
-        self.link_desc.grid(row=2, column=0, sticky='nesw')
+        self.link_desc.grid(row=3, column=0, sticky='nesw')
         self.link_entry = ttk.Entry(self)
-        self.link_entry.grid(row=2, column=1, sticky='nesw')
+        self.link_entry.grid(row=3, column=1, sticky='nesw')
 
         self.venue_desc = ttk.Label(self, text='Venue: ')
-        self.venue_desc.grid(row=3, column=0, sticky='nesw')
+        self.venue_desc.grid(row=4, column=0, sticky='nesw')
         self.venue_entry = ttk.Entry(self)
-        self.venue_entry.grid(row=3, column=1, sticky='nesw')
+        self.venue_entry.grid(row=4, column=1, sticky='nesw')
 
         self.button_frame = tk.Frame(self)
-        self.button_frame.grid(row=4, column=0, columnspan=2, sticky='nesw')
+        self.button_frame.grid(row=5, column=0, columnspan=2, sticky='nesw')
 
         self.cancel_button = ttk.Button(self.button_frame, text='Cancel', command=self.force_close)
         self.cancel_button.pack(side='right')
@@ -311,9 +325,12 @@ class GigPopup(tk.Toplevel):
     def load_src(self):
         with open(self.src) as f:
             gig_details = yaml.safe_load(f)
+
+        gig_details = {'event': None, 'date': None, 'time': None, 'link': None, 'venue': None} | gig_details
             
         self.event_entry.insert(tk.END, gig_details['event'] or '')
         self.date_entry.set_date(gig_details['date'])
+        self.time_entry.insert(tk.END, gig_details['time'] or '')
         self.link_entry.insert(tk.END, gig_details['link'] or '')
         self.venue_entry.insert(tk.END, gig_details['venue'] or '')
 
@@ -321,6 +338,7 @@ class GigPopup(tk.Toplevel):
         gig_details = {}
         gig_details['event'] = self.event_entry.get()
         gig_details['date'] = self.date_entry.get_date()
+        gig_details['time'] = self.time_entry.get()
         gig_details['link'] = self.link_entry.get()
         gig_details['venue'] = self.venue_entry.get()
 
@@ -367,7 +385,7 @@ class ReleasePopup(tk.Toplevel):
         self.date_desc.grid(row=1, column=0, sticky='nsw')
         self.date_entry = tkcalendar.DateEntry(self, locale='en_AU')
         self.date_entry.grid(row=1, column=1, sticky='nesw')
-
+        
         self.description_desc = ttk.Label(self, text='Description:')
         self.description_desc.grid(row=2, column=0, sticky='nsw')
         self.description_entry = tk.Text(self, height=4)
