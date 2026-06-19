@@ -123,7 +123,7 @@ class Builder:
             self.db['gigs'].append(gig_details)
 
         self.db['past gigs'].sort(key=lambda x: x['date'], reverse=True)
-        self.db['upcoming gigs'].sort(key=lambda x: x['date'], reverse=True)
+        self.db['upcoming gigs'].sort(key=lambda x: x['date'], reverse=False)
 
     def build_covers(self):
         print('Converting covers...')
