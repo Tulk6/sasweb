@@ -43,6 +43,7 @@ class Twig(tkdnd.Tk):
         
         self.update_release_list()
         self.update_gig_list()
+        self.update_blog_list()
         
         self.mainloop()
 
@@ -88,6 +89,7 @@ class Twig(tkdnd.Tk):
         self.release_delete = ttk.Button(self.release_frame, text='Delete', command=self.ask_delete_release)
         self.release_delete.grid(column=2, row=1, sticky='nesw')
 
+
         self.gig_frame = ttk.Frame(self.notebook)
         self.gig_frame.columnconfigure(0, weight=1)
         self.gig_frame.columnconfigure(1, weight=1)
@@ -106,9 +108,29 @@ class Twig(tkdnd.Tk):
         self.gig_delete = ttk.Button(self.gig_frame, text='Delete', command=self.ask_delete_gig)
         self.gig_delete.grid(row=1, column=2, sticky='nesw')
 
+        
+        self.blog_frame = ttk.Frame(self.notebook)
+        self.blog_frame.columnconfigure(0, weight=1)
+        self.blog_frame.columnconfigure(1, weight=1)
+        self.blog_frame.columnconfigure(2, weight=1)
+        self.blog_frame.rowconfigure(0, weight=1)
+
+        self.blog_list = tk.Listbox(self.blog_frame, selectmode=tk.SINGLE)
+        self.blog_list.grid(column=0, row=0, columnspan=3, sticky='nesw')
+
+        self.blog_edit = ttk.Button(self.blog_frame, text='Edit', command=self.edit_blog)
+        self.blog_edit.grid(row=1, column=0, sticky='nesw')
+
+        self.blog_new = ttk.Button(self.blog_frame, text='New', command=self.ask_new_blog)
+        self.blog_new.grid(row=1, column=1, sticky='nesw')
+
+        self.blog_delete = ttk.Button(self.blog_frame, text='Delete', command=self.ask_delete_blog)
+        self.blog_delete.grid(row=1, column=2, sticky='nesw')
+
         self.notebook.add(self.site_frame, text='Site')
         self.notebook.add(self.release_frame, text='Releases')
         self.notebook.add(self.gig_frame, text='Gigs')
+        self.notebook.add(self.blog_frame, text='Blog')
         self.notebook.pack(expand=True, fill='both')
 
     def ask_update(self):
@@ -149,9 +171,27 @@ class Twig(tkdnd.Tk):
         for release in releases:
             self.release_list.insert(tk.END, release[0])
 
+    def update_blog_list(self):
+        self.blog_list.delete(0, tk.END)
+
+        blogs = []
+        for blog_file in os.listdir('src/blog'):
+            if blog_file[0] == '.': continue #ds store etc
+            with open('src/blog/'+blog_file) as f:
+                blog_details = yaml.safe_load(f)
+                blog_details['slug'] = blog_file.split('.')[0]
+            blogs.append(blog_details)
+
+
+        blogs.sort(key=lambda x: x['date'], reverse=True)
+
+        for blog in blogs:
+            self.blog_list.insert(tk.END, blog['slug'])
+
     def on_tab_change(self, event):
         self.update_gig_list()
         self.update_release_list()
+        self.update_blog_list()
 
     def create_gig_popup(self, gig_slug):
         self.gig_popup = GigPopup(self, gig_slug)
@@ -253,6 +293,52 @@ class Twig(tkdnd.Tk):
     def delete_release(self, name):
         shutil.rmtree(f'src/releases/{name}')
         self.update_release_list()
+
+    def create_blog_popup(self, blog_slug):
+        self.blog_popup = BlogPopup(self, blog_slug)
+        self.blog_popup.grab_set()
+        self.wait_window(self.blog_popup)
+
+    def edit_blog(self):
+        if not self.blog_list.curselection(): return
+        current_blog = self.blog_list.get(self.blog_list.curselection())
+        self.create_blog_popup(current_blog)
+
+    def ask_new_blog(self):
+        while True:
+            blog_name = tksd.askstring('Enter ID', prompt='Please enter an ID (this will not be visible to others so you can choose whatever)')
+            if not blog_name:
+                return
+            if not blog_name.replace(' ', '').replace('_', '').isalnum():
+                tkmb.showerror('Invalid ID', message='ID must contain only letters, numbers, _, and spaces')
+            elif os.path.exists(f'src/blog/{blog_name}'):
+                tkmb.showerror('Invalid ID', message='ID already exists')
+            else:
+                break
+
+        self.new_blog(blog_name)
+        self.create_blog_popup(blog_name)
+
+    def new_blog(self, blog_name):
+        today = datetime.date.today()
+        with open(f'src/blog/{blog_name}.yaml', 'w') as f:
+            f.write(f'date: {today}\n'
+                    'title: \n'
+                    'tags: \n'
+                    'content: \n')
+
+        self.update_blog_list()
+
+    def ask_delete_blog(self):
+        if not self.blog_list.curselection(): return
+        blog_name = self.blog_list.get(self.blog_list.curselection())
+        sure_delete = tkmb.askyesno(title='Delete Blog Post?', message=f'Would you like to delete {blog_name}?')
+        if sure_delete:
+            self.delete_blog(blog_name)
+
+    def delete_blog(self, slug):
+        os.remove(f'src/blog/{slug}.yaml')
+        self.update_blog_list()
 
     def build(self):
         sure_build = tkmb.askokcancel('Continue building', message='This will remove all unsaved changes. Proceed?')
@@ -485,5 +571,78 @@ class ReleasePopup(tk.Toplevel):
         sure_close = tkmb.askokcancel(title='Close without saving', message='Your changes are not saved. Would you like to close without saving?')
         if sure_close:
             self.force_close()
+
+
+class BlogPopup(tk.Toplevel):
+    def __init__(self, root, slug):
+        super().__init__()
+        self.root = root
+        self.slug = slug
+        self.src = f'src/blog/{slug}.yaml'
+
+        self.load_gui()
+        self.load_src()
+
+    def load_gui(self):
+        self.title(f'Editing {self.slug}')
+        self.protocol('WM_DELETE_WINDOW', self.ask_close)
+        self.resizable(True, False)
+
+        self.columnconfigure(1, weight=1)
+        
+        self.title_desc = ttk.Label(self, text='Title: ')
+        self.title_desc.grid(row=0, column=0, sticky='nesw')
+        self.title_entry = ttk.Entry(self)
+        self.title_entry.grid(row=0, column=1, sticky='nesw')
+
+        self.date_desc = ttk.Label(self, text='Date: ')
+        self.date_desc.grid(row=1, column=0, sticky='nesw')
+        self.date_entry = tkcalendar.DateEntry(self, locale='en_AU')
+        self.date_entry.grid(row=1, column=1, sticky='nesw')
+
+        self.content_desc = ttk.Label(self, text='Content:')
+        self.content_desc.grid(row=2, column=0, sticky='nsw')
+        self.content_entry = tk.Text(self, height=4)
+        self.content_entry.grid(row=3, column=0, columnspan=2, sticky='nesw')
+
+        self.button_frame = tk.Frame(self)
+        self.button_frame.grid(row=4, column=0, columnspan=2, sticky='nesw')
+
+        self.cancel_button = ttk.Button(self.button_frame, text='Cancel', command=self.force_close)
+        self.cancel_button.pack(side='right')
+        
+        self.save_button = ttk.Button(self.button_frame, text='Save and Close', command=self.save_and_close)
+        self.save_button.pack(side='right')
+
+    def load_src(self):
+        with open(self.src) as f:
+            blog_details = yaml.safe_load(f)
+
+        blog_details = {'title': None, 'date': None, 'content': None, 'tags': None} | blog_details
+        
+        self.title_entry.insert(tk.END, blog_details['title'] or '')
+        self.date_entry.set_date(blog_details['date'])
+        self.content_entry.insert(tk.END, blog_details['content'] or '')
+
+    def save_src(self):
+        gig_details = {}
+        gig_details['title'] = self.title_entry.get()
+        gig_details['date'] = self.date_entry.get_date()
+        gig_details['content'] = self.content_entry.get('1.0', tk.END)
+
+        with open(self.src, 'w') as f:
+            yaml.safe_dump(gig_details, f)
+
+    def save_and_close(self):
+        self.save_src()
+        self.force_close()
+
+    def ask_close(self):
+        sure_close = tkmb.askokcancel(title='Close without saving', message='Your changes are not saved. Would you like to close without saving?')
+        if sure_close:
+            self.force_close()
+
+    def force_close(self):
+        self.destroy()
 
 twig = Twig()

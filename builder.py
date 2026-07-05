@@ -31,6 +31,7 @@ class Builder:
         self.ensure_folder('src')
         self.ensure_folder('src/gigs')
         self.ensure_folder('src/releases')
+        self.ensure_folder('src/blog')
         self.ensure_folder('src/static')
         self.ensure_folder('src/templates')
 
@@ -58,6 +59,7 @@ class Builder:
         self.load_manifest()
         self.load_gigs()
         self.load_releases()
+        self.load_blog()
         print('>>Site loaded')
 
     def build_site(self):
@@ -124,6 +126,25 @@ class Builder:
 
         self.db['past gigs'].sort(key=lambda x: x['date'], reverse=True)
         self.db['upcoming gigs'].sort(key=lambda x: x['date'], reverse=False)
+
+    def load_blog(self):
+        self.db['blog'] = []
+        for blog_post in os.listdir('src/blog'):
+            if blog_post[0] == '.': continue
+            with open(f'src/blog/{blog_post}') as f:
+                blog_details = yaml.safe_load(f)
+            blog_details = {'title': None, 'date': None, 'content': None, 'tags': None} | blog_details
+            blog_details['slug'] = blog_post
+            raw_day = blog_details['date'].day
+            if 4 <= raw_day <= 20 or 24 <= raw_day <= 30:
+                suffix = "th"
+            else:
+                suffix = ["st", "nd", "rd"][raw_day % 10 - 1]
+            day = str(raw_day) + suffix
+            blog_details['date'] = blog_details['date'].strftime("%A the ") + day + blog_details['date'].strftime(" of %B %Y")
+            self.db['blog'].append(blog_details)
+
+        self.db['blog'].sort(key=lambda x: x['date'])
 
     def build_covers(self):
         print('Converting covers...')
