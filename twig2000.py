@@ -40,11 +40,11 @@ class Twig(tkdnd.Tk):
         self.uploader = uploader.Uploader(keys.NEOCITIES_API_KEY)
 
         self.load_gui()
-        
+
         self.update_release_list()
         self.update_gig_list()
         self.update_blog_list()
-        
+
         self.mainloop()
 
     def load_gui(self):
@@ -108,7 +108,7 @@ class Twig(tkdnd.Tk):
         self.gig_delete = ttk.Button(self.gig_frame, text='Delete', command=self.ask_delete_gig)
         self.gig_delete.grid(row=1, column=2, sticky='nesw')
 
-        
+
         self.blog_frame = ttk.Frame(self.notebook)
         self.blog_frame.columnconfigure(0, weight=1)
         self.blog_frame.columnconfigure(1, weight=1)
@@ -217,7 +217,7 @@ class Twig(tkdnd.Tk):
 
         self.new_gig(gig_name)
         self.create_gig_popup(gig_name)
-        
+
 
     def new_gig(self, gig_name):
         today = datetime.date.today()
@@ -275,7 +275,7 @@ class Twig(tkdnd.Tk):
             f.write((f'date: {today}\n'
                     'description: New Release\n'
                     'links:\n'
-                    '   Bandcamp: \n' 
+                    '   Bandcamp: \n'
                     '   Soundcloud: \n'
                     '   Spotify: \n'
                     '   YouTube: \n'
@@ -356,7 +356,7 @@ class Twig(tkdnd.Tk):
         if self.build(): #ugly but so if cancelled building, cancel uploading
             self.upload()
 
-    
+
 class GigPopup(tk.Toplevel):
     def __init__(self, root, slug):
         super().__init__()
@@ -373,7 +373,7 @@ class GigPopup(tk.Toplevel):
         self.resizable(True, False)
 
         self.columnconfigure(1, weight=1)
-        
+
         self.event_desc = ttk.Label(self, text='Event: ')
         self.event_desc.grid(row=0, column=0, sticky='nesw')
         self.event_entry = ttk.Entry(self)
@@ -404,7 +404,7 @@ class GigPopup(tk.Toplevel):
 
         self.cancel_button = ttk.Button(self.button_frame, text='Cancel', command=self.force_close)
         self.cancel_button.pack(side='right')
-        
+
         self.save_button = ttk.Button(self.button_frame, text='Save and Close', command=self.save_and_close)
         self.save_button.pack(side='right')
 
@@ -413,7 +413,7 @@ class GigPopup(tk.Toplevel):
             gig_details = yaml.safe_load(f)
 
         gig_details = {'event': None, 'date': None, 'time': None, 'link': None, 'venue': None} | gig_details
-            
+
         self.event_entry.insert(tk.END, gig_details['event'] or '')
         self.date_entry.set_date(gig_details['date'])
         self.time_entry.insert(tk.END, gig_details['time'] or '')
@@ -450,18 +450,18 @@ class ReleasePopup(tk.Toplevel):
         self.slug = slug
         self.dir = f'src/releases/{self.slug}/'
         self.cover_path = None
-        
+
         self.load_gui()
         self.load_dir()
 
     def load_gui(self):
         self.title(f'Editing {self.slug}')
         self.protocol('WM_DELETE_WINDOW', self.ask_close)
-        
+
         self.columnconfigure(1, weight=1)
         self.rowconfigure(3, weight=1)
         self.rowconfigure(5, weight=1)
-        
+
         self.title_desc = ttk.Label(self, text='Title:')
         self.title_desc.grid(row=0, column=0, sticky='nsw')
         self.title_entry = ttk.Entry(self)
@@ -471,7 +471,7 @@ class ReleasePopup(tk.Toplevel):
         self.date_desc.grid(row=1, column=0, sticky='nsw')
         self.date_entry = tkcalendar.DateEntry(self, locale='en_AU')
         self.date_entry.grid(row=1, column=1, sticky='nesw')
-        
+
         self.description_desc = ttk.Label(self, text='Description:')
         self.description_desc.grid(row=2, column=0, sticky='nsw')
         self.description_entry = tk.Text(self, height=4)
@@ -512,7 +512,7 @@ class ReleasePopup(tk.Toplevel):
         for link_name, url in release_details['links'].items():
             if url is None: url = ''
             self.links_entry.insert(tk.END, f'{link_name}: {url}\n')
-        
+
         try:
             self.cover_img = Image.open(self.dir+'cover.png')
             self.cover_img.thumbnail((100, 100))
@@ -523,7 +523,7 @@ class ReleasePopup(tk.Toplevel):
 
     def save_dir(self):
         release_details = {}
-        
+
         release_details['title'] = self.title_entry.get()
         release_details['date'] = self.date_entry.get_date()
         release_details['description'] = self.description_entry.get('1.0', tk.END).strip()
@@ -589,7 +589,7 @@ class BlogPopup(tk.Toplevel):
         self.resizable(True, False)
 
         self.columnconfigure(1, weight=1)
-        
+
         self.title_desc = ttk.Label(self, text='Title: ')
         self.title_desc.grid(row=0, column=0, sticky='nesw')
         self.title_entry = ttk.Entry(self)
@@ -610,27 +610,27 @@ class BlogPopup(tk.Toplevel):
 
         self.cancel_button = ttk.Button(self.button_frame, text='Cancel', command=self.force_close)
         self.cancel_button.pack(side='right')
-        
+
         self.save_button = ttk.Button(self.button_frame, text='Save and Close', command=self.save_and_close)
         self.save_button.pack(side='right')
 
     def load_src(self):
-        with open(self.src) as f:
+        with open(self.src, encoding='utf-8') as f:
             blog_details = yaml.safe_load(f)
 
         blog_details = {'title': None, 'date': None, 'content': None, 'tags': None} | blog_details
-        
+
         self.title_entry.insert(tk.END, blog_details['title'] or '')
         self.date_entry.set_date(blog_details['date'])
         self.content_entry.insert(tk.END, blog_details['content'] or '')
 
     def save_src(self):
-        gig_details = {}
-        gig_details['title'] = self.title_entry.get()
-        gig_details['date'] = self.date_entry.get_date()
-        gig_details['content'] = self.content_entry.get('1.0', tk.END)
+        blog_details = {}
+        blog_details['title'] = self.title_entry.get()
+        blog_details['date'] = self.date_entry.get_date()
+        blog_details['content'] = self.content_entry.get('1.0', tk.END)
 
-        with open(self.src, 'w') as f:
+        with open(self.src, 'w', encoding='utf-8') as f:
             yaml.safe_dump(gig_details, f)
 
     def save_and_close(self):

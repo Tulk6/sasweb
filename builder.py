@@ -38,9 +38,9 @@ class Builder:
         self.ensure_folder('archive')
 
         self.ensure_folder('site')
-        
+
         self.ensure_file('src/manifest.yaml')
-        
+
 
     def rebuild_site(self, make_archive=False, clean_build=True):
         if make_archive: self.archive_site()
@@ -142,6 +142,7 @@ class Builder:
                 suffix = ["st", "nd", "rd"][raw_day % 10 - 1]
             day = str(raw_day) + suffix
             blog_details['date'] = blog_details['date'].strftime("%A the ") + day + blog_details['date'].strftime(" of %B %Y")
+            blog_details['content'] = blog_details['content'].replace('\n', '<br>')
             self.db['blog'].append(blog_details)
 
         self.db['blog'].sort(key=lambda x: x['date'])
