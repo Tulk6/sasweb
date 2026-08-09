@@ -162,7 +162,7 @@ class Twig(tkdnd.Tk):
         for release_dir in os.listdir('src/releases'):
             if release_dir[0] == '.': continue #ds store etc
             with open('src/releases/'+release_dir+'/info.yaml') as f:
-                release_details = yaml.safe_load(f)
+                release_details = yaml.safe_load(f) 
             releases.append((release_dir, release_details['date']))
 
 
@@ -586,7 +586,7 @@ class BlogPopup(tk.Toplevel):
     def load_gui(self):
         self.title(f'Editing {self.slug}')
         self.protocol('WM_DELETE_WINDOW', self.ask_close)
-        self.resizable(True, False)
+        self.resizable(True, True)
 
         self.columnconfigure(1, weight=1)
 
@@ -631,7 +631,7 @@ class BlogPopup(tk.Toplevel):
         blog_details['content'] = self.content_entry.get('1.0', tk.END)
 
         with open(self.src, 'w', encoding='utf-8') as f:
-            yaml.safe_dump(gig_details, f)
+            yaml.safe_dump(blog_details, f)
 
     def save_and_close(self):
         self.save_src()

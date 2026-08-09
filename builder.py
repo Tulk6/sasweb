@@ -131,7 +131,7 @@ class Builder:
         self.db['blog'] = []
         for blog_post in os.listdir('src/blog'):
             if blog_post[0] == '.': continue
-            with open(f'src/blog/{blog_post}') as f:
+            with open(f'src/blog/{blog_post}', encoding='utf-8') as f:
                 blog_details = yaml.safe_load(f)
             blog_details = {'title': None, 'date': None, 'content': None, 'tags': None} | blog_details
             blog_details['slug'] = blog_post
@@ -184,12 +184,12 @@ class Builder:
         for page in os.listdir('src/templates'):
             if page[0] == '.': continue
             page_title = page.split('.')[0]
-            with open(f'src/templates/{page}') as f:
+            with open(f'src/templates/{page}', encoding='utf-8') as f:
                 template = f.read()
 
             rendered_page = chevron.render(template, self.db)
 
-            with open(f'site/{page_title}.html', 'w') as f:
+            with open(f'site/{page_title}.html', 'w', encoding='utf-8') as f:
                 f.write(rendered_page)
 
         print('>>Pages rendered')
